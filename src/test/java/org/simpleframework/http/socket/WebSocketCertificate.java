@@ -18,153 +18,156 @@ import javax.net.ssl.X509TrustManager;
 
 public class WebSocketCertificate {
 
-   private final X509TrustManager trustManager;
-   private final X509TrustManager[] trustManagers;
-   private final KeyStoreReader keyStoreReader;
-   private final SecureProtocol secureProtocol;
+    private final X509TrustManager trustManager;
+    private final X509TrustManager[] trustManagers;
+    private final KeyStoreReader keyStoreReader;
+    private final SecureProtocol secureProtocol;
 
-   public WebSocketCertificate(KeyStoreReader keyStoreReader, SecureProtocol secureProtocol) {
-      this.trustManager = new AnonymousTrustManager();
-      this.trustManagers = new X509TrustManager[] { trustManager };
-      this.keyStoreReader = keyStoreReader;
-      this.secureProtocol = secureProtocol;
-   }
+    public WebSocketCertificate(KeyStoreReader keyStoreReader, SecureProtocol secureProtocol) {
+        this.trustManager = new AnonymousTrustManager();
+        this.trustManagers = new X509TrustManager[] { trustManager };
+        this.keyStoreReader = keyStoreReader;
+        this.secureProtocol = secureProtocol;
+    }
 
-   public WebSocketCertificate(KeyStoreReader keyStoreReader, SecureProtocol secureProtocol, X509TrustManager trustManager) {
-      this.trustManagers = new X509TrustManager[] { trustManager };
-      this.keyStoreReader = keyStoreReader;
-      this.secureProtocol = secureProtocol;
-      this.trustManager = trustManager;
-   }
+    public WebSocketCertificate(KeyStoreReader keyStoreReader, SecureProtocol secureProtocol, X509TrustManager trustManager) {
+        this.trustManagers = new X509TrustManager[] { trustManager };
+        this.keyStoreReader = keyStoreReader;
+        this.secureProtocol = secureProtocol;
+        this.trustManager = trustManager;
+    }
 
-   public SSLContext getContext() throws Exception {
-      KeyManager[] keyManagers = keyStoreReader.getKeyManagers();
-      SSLContext secureContext = secureProtocol.getContext();
+    public SSLContext getContext() throws Exception {
+        final KeyManager[] keyManagers = keyStoreReader.getKeyManagers();
+        final SSLContext secureContext = secureProtocol.getContext();
 
-      secureContext.init(keyManagers, trustManagers, null);
+        secureContext.init(keyManagers, trustManagers, null);
 
-      return secureContext;
-   }
+        return secureContext;
+    }
 
-   public SSLSocketFactory getSocketFactory() throws Exception {
-      KeyManager[] keyManagers = keyStoreReader.getKeyManagers();
-      SSLContext secureContext = secureProtocol.getContext();
+    public SSLSocketFactory getSocketFactory() throws Exception {
+        final KeyManager[] keyManagers = keyStoreReader.getKeyManagers();
+        final SSLContext secureContext = secureProtocol.getContext();
 
-      secureContext.init(keyManagers, trustManagers, null);
+        secureContext.init(keyManagers, trustManagers, null);
 
-      return secureContext.getSocketFactory();
-   }
+        return secureContext.getSocketFactory();
+    }
 
-   public SSLServerSocketFactory getServerSocketFactory() throws Exception {
-      KeyManager[] keyManagers = keyStoreReader.getKeyManagers();
-      SSLContext secureContext = secureProtocol.getContext();
+    public SSLServerSocketFactory getServerSocketFactory() throws Exception {
+        final KeyManager[] keyManagers = keyStoreReader.getKeyManagers();
+        final SSLContext secureContext = secureProtocol.getContext();
 
-      secureContext.init(keyManagers, trustManagers, null);
+        secureContext.init(keyManagers, trustManagers, null);
 
-      return secureContext.getServerSocketFactory();
-   }
-   
-   public static enum SecureProtocol {
-      DEFAULT("Default"), 
-      SSL("SSL"), 
-      TLS("TLS");
+        return secureContext.getServerSocketFactory();
+    }
 
-      private final String protocol;
+    public static enum SecureProtocol {
+        DEFAULT("Default"),
+        SSL("SSL"),
+        TLS("TLS");
 
-      private SecureProtocol(String protocol) {
-         this.protocol = protocol;
-      }
+        private final String protocol;
 
-      public SSLContext getContext() throws NoSuchAlgorithmException {
-         return SSLContext.getInstance(protocol);
-      }
-   }   
-   
-   public static enum KeyStoreType {
-      JKS("JKS", "SunX509"), 
-      PKCS12("PKCS12", "SunX509");
+        private SecureProtocol(String protocol) {
+            this.protocol = protocol;
+        }
 
-      private final String algorithm;
-      private final String type;
+        public SSLContext getContext() throws NoSuchAlgorithmException {
+            return SSLContext.getInstance(protocol);
+        }
+    }
 
-      private KeyStoreType(String type, String algorithm) {
-         this.algorithm = algorithm;
-         this.type = type;
-      }
+    public static enum KeyStoreType {
+        JKS("JKS", "SunX509"),
+        PKCS12("PKCS12", "SunX509");
 
-      public String getType() {
-         return type;
-      }
+        private final String algorithm;
+        private final String type;
 
-      public KeyStore getKeyStore() throws KeyStoreException {
-         return KeyStore.getInstance(type);
-      }
+        private KeyStoreType(String type, String algorithm) {
+            this.algorithm = algorithm;
+            this.type = type;
+        }
 
-      public KeyManagerFactory getKeyManagerFactory() throws NoSuchAlgorithmException {
-         return KeyManagerFactory.getInstance(algorithm);
-      }
-   }
-   
-   public static class KeyStoreReader {
+        public String getType() {
+            return type;
+        }
 
-      private final KeyStoreManager keyStoreManager;
-      private final String keyManagerPassword;
-      private final String keyStorePassword;
-      private final File keyStore;
+        public KeyStore getKeyStore() throws KeyStoreException {
+            return KeyStore.getInstance(type);
+        }
 
-      public KeyStoreReader(KeyStoreType keyStoreType, File keyStore, String keyStorePassword, String keyManagerPassword) {
-         this.keyStoreManager = new KeyStoreManager(keyStoreType);
-         this.keyManagerPassword = keyManagerPassword;
-         this.keyStorePassword = keyStorePassword;
-         this.keyStore = keyStore;
-      }
+        public KeyManagerFactory getKeyManagerFactory() throws NoSuchAlgorithmException {
+            return KeyManagerFactory.getInstance(algorithm);
+        }
+    }
 
-      public KeyManager[] getKeyManagers() throws Exception {
-         InputStream storeSource = new FileInputStream(keyStore);
+    public static class KeyStoreReader {
 
-         try {
-            return keyStoreManager.getKeyManagers(storeSource, keyStorePassword, keyManagerPassword);
-         } finally {
-            storeSource.close();
-         }
-      }
-   }
+        private final KeyStoreManager keyStoreManager;
+        private final String keyManagerPassword;
+        private final String keyStorePassword;
+        private final File keyStore;
 
-   public static class KeyStoreManager {
+        public KeyStoreReader(KeyStoreType keyStoreType, File keyStore, String keyStorePassword, String keyManagerPassword) {
+            this.keyStoreManager = new KeyStoreManager(keyStoreType);
+            this.keyManagerPassword = keyManagerPassword;
+            this.keyStorePassword = keyStorePassword;
+            this.keyStore = keyStore;
+        }
 
-      private final KeyStoreType keyStoreType;
+        public KeyManager[] getKeyManagers() throws Exception {
+            final InputStream storeSource = new FileInputStream(keyStore);
 
-      public KeyStoreManager(KeyStoreType keyStoreType) {
-         this.keyStoreType = keyStoreType;
-      }
+            try {
+                return keyStoreManager.getKeyManagers(storeSource, keyStorePassword, keyManagerPassword);
+            } finally {
+                storeSource.close();
+            }
+        }
+    }
 
-      public KeyManager[] getKeyManagers(InputStream keyStoreSource, String keyStorePassword, String keyManagerPassword) throws Exception {
-         KeyStore keyStore = keyStoreType.getKeyStore();
-         KeyManagerFactory keyManagerFactory = keyStoreType.getKeyManagerFactory();
+    public static class KeyStoreManager {
 
-         keyStore.load(keyStoreSource, keyManagerPassword.toCharArray());
-         keyManagerFactory.init(keyStore, keyManagerPassword.toCharArray());
+        private final KeyStoreType keyStoreType;
 
-         return keyManagerFactory.getKeyManagers();
-      }
-   }
-   
-   public static class AnonymousTrustManager implements X509TrustManager {
+        public KeyStoreManager(KeyStoreType keyStoreType) {
+            this.keyStoreType = keyStoreType;
+        }
 
-      public boolean isClientTrusted(X509Certificate[] cert) {
-         return true;
-      }
+        public KeyManager[] getKeyManagers(InputStream keyStoreSource, String keyStorePassword, String keyManagerPassword) throws Exception {
+            final KeyStore keyStore = keyStoreType.getKeyStore();
+            final KeyManagerFactory keyManagerFactory = keyStoreType.getKeyManagerFactory();
 
-      public boolean isServerTrusted(X509Certificate[] cert) {
-         return true;
-      }
+            keyStore.load(keyStoreSource, keyManagerPassword.toCharArray());
+            keyManagerFactory.init(keyStore, keyManagerPassword.toCharArray());
 
-      public X509Certificate[] getAcceptedIssuers() {
-         return new X509Certificate[0];
-      }
+            return keyManagerFactory.getKeyManagers();
+        }
+    }
 
-      public void checkClientTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {}   
+    public static class AnonymousTrustManager implements X509TrustManager {
 
-      public void checkServerTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {}
-   }
+        public boolean isClientTrusted(X509Certificate[] cert) {
+            return true;
+        }
+
+        public boolean isServerTrusted(X509Certificate[] cert) {
+            return true;
+        }
+
+        @Override
+        public X509Certificate[] getAcceptedIssuers() {
+            return new X509Certificate[0];
+        }
+
+        @Override
+        public void checkClientTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {}
+
+        @Override
+        public void checkServerTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {}
+    }
 }

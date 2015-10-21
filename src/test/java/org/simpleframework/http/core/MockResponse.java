@@ -10,86 +10,99 @@ import java.nio.channels.WritableByteChannel;
 import java.util.Map;
 
 import org.simpleframework.http.Response;
-import org.simpleframework.http.core.ResponseMessage;
 
 public class MockResponse extends ResponseMessage implements Response {
 
-   private boolean committed;
-   
-   public MockResponse() {
-      super();
-   }
-   
-   public OutputStream getOutputStream() {
-      return System.out;
-   }
-   
-   public boolean isKeepAlive() {
-      String value = getValue(CONNECTION);
-      
-      if(value != null) {
-         return value.equalsIgnoreCase(CLOSE);
-      }
-      return true;
-   }
-   
-   public boolean isCommitted() {
-      return committed;
-   }
-   
-   public void commit() {
-      committed = true;
-   }
-   
-   public void reset() {
-      return;
-   }
-   
-   public void close() {
-      return;
-   }
+    private boolean committed;
 
-   public Object getAttribute(String name) {
-      return null;
-   }
+    public MockResponse() {
+        super();
+    }
 
-   public Map getAttributes() {
-      return null;
-   }
+    @Override
+    public OutputStream getOutputStream() {
+        return System.out;
+    }
 
-   public OutputStream getOutputStream(int size) throws IOException {
-      return null;
-   }
+    @Override
+    public boolean isKeepAlive() {
+        final String value = getValue(CONNECTION);
 
-   public PrintStream getPrintStream() throws IOException {
-      return null;
-   }
+        if(value != null) {
+            return value.equalsIgnoreCase(CLOSE);
+        }
+        return true;
+    }
 
-   public PrintStream getPrintStream(int size) throws IOException {
-      return null;
-   }
+    @Override
+    public boolean isCommitted() {
+        return committed;
+    }
 
-   public void setContentLength(long length) {
-      setValue("Content-Length", String.valueOf(length));
-   }
+    @Override
+    public void commit() {
+        committed = true;
+    }
 
-   public WritableByteChannel getByteChannel() throws IOException {
-      return null;
-   }
+    @Override
+    public void reset() {
+        return;
+    }
 
-   public WritableByteChannel getByteChannel(int size) throws IOException {
-      return null;
-   }
+    @Override
+    public void close() {
+        return;
+    }
 
-   public boolean isEmpty() {
-      return false;
-   }
+    public Object getAttribute(String name) {
+        return null;
+    }
 
-   public long getResponseTime() {
-      return 0;
-   }
+    public Map getAttributes() {
+        return null;
+    }
 
-   public void setContentType(String type) {
-      setValue("Content-Type", type);
-   }
+    @Override
+    public OutputStream getOutputStream(int size) throws IOException {
+        return null;
+    }
+
+    @Override
+    public PrintStream getPrintStream() throws IOException {
+        return null;
+    }
+
+    @Override
+    public PrintStream getPrintStream(int size) throws IOException {
+        return null;
+    }
+
+    @Override
+    public void setContentLength(long length) {
+        setValue("Content-Length", String.valueOf(length));
+    }
+
+    @Override
+    public WritableByteChannel getByteChannel() throws IOException {
+        return null;
+    }
+
+    @Override
+    public WritableByteChannel getByteChannel(int size) throws IOException {
+        return null;
+    }
+
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @Override
+    public long getResponseTime() {
+        return 0;
+    }
+
+    @Override
+    public void setContentType(String type) {
+        setValue("Content-Type", type);
+    }
 }

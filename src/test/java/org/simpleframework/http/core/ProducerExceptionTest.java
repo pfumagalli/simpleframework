@@ -2,22 +2,24 @@ package org.simpleframework.http.core;
 
 import java.io.IOException;
 
-import junit.framework.TestCase;
+import org.testng.AssertJUnit;
+import org.testng.annotations.Test;
 
-public class ProducerExceptionTest extends TestCase {
-   
-   public void testException() {
-      try {
-         throw new IOException("Error");
-      }catch(Exception main) {
-         try {
-            throw new BodyEncoderException("Wrapper", main);
-         }catch(Exception cause) {
-            cause.printStackTrace();
-            
-            assertEquals(cause.getCause(), main);
-         }
-      }
-   }
+public class ProducerExceptionTest {
+
+    @Test
+    public void testException() {
+        try {
+            throw new IOException("Error");
+        }catch(final Exception main) {
+            try {
+                throw new BodyEncoderException("Wrapper", main);
+            }catch(final Exception cause) {
+                cause.printStackTrace();
+
+                AssertJUnit.assertEquals(cause.getCause(), main);
+            }
+        }
+    }
 
 }

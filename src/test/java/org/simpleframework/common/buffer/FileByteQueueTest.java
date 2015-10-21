@@ -1,11 +1,12 @@
 package org.simpleframework.common.buffer;
 
-import junit.framework.TestCase;
+import org.testng.annotations.Test;
 
-public class FileByteQueueTest extends TestCase {
-   
-   public void testQueue() throws Exception {
-     /* Allocator allocator = new FileAllocator();
+public class FileByteQueueTest {
+
+    @Test
+    public void testQueue() throws Exception {
+        /* Allocator allocator = new FileAllocator();
       FileByteQueue queue = new FileByteQueue(allocator);
       for(int i = 0; i < 26; i++) {
          queue.write(new byte[]{(byte)(i+'a')}, 0, 1);
@@ -17,6 +18,5 @@ public class FileByteQueueTest extends TestCase {
          System.err.println("READ>>"+((char)buffer[0]));
          assertEquals(buffer[0], (byte)(i+'a'));
       }*/
-   }
-
+    }
 }

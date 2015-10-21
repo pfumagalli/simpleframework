@@ -12,34 +12,38 @@ import org.simpleframework.transport.trace.Trace;
 
 public class MockSocket implements Socket {
 
-   private SocketChannel socket;
-   private SSLEngine engine;
-   private Map map;
-  
-   public MockSocket(SocketChannel socket) {
-      this(socket, null);
-   }
-  
-   public MockSocket(SocketChannel socket, SSLEngine engine) {
-      this.map = new HashMap();
-      this.engine = engine;
-      this.socket = socket;
-   } 
-  
-   public SSLEngine getEngine() {
-      return engine;
-   }
-   
-   public SocketChannel getChannel() {
-      return socket;
-   }
- 
-   public Map getAttributes() {
-      return map;           
-   }
+    private final SocketChannel socket;
+    private final SSLEngine engine;
+    private final Map map;
 
-   public Trace getTrace() {
-      return new MockTrace();
-   }
+    public MockSocket(SocketChannel socket) {
+        this(socket, null);
+    }
+
+    public MockSocket(SocketChannel socket, SSLEngine engine) {
+        this.map = new HashMap();
+        this.engine = engine;
+        this.socket = socket;
+    }
+
+    @Override
+    public SSLEngine getEngine() {
+        return engine;
+    }
+
+    @Override
+    public SocketChannel getChannel() {
+        return socket;
+    }
+
+    @Override
+    public Map getAttributes() {
+        return map;
+    }
+
+    @Override
+    public Trace getTrace() {
+        return new MockTrace();
+    }
 }
 

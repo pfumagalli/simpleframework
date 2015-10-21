@@ -7,31 +7,31 @@ import org.simpleframework.http.Cookie;
 
 class Result {
 
-   private List<Cookie> cookies;
-   private String response;
-   private byte[] body;
-   private Map map;
+    private final List<Cookie> cookies;
+    private final String response;
+    private final byte[] body;
+    private final Map map;
 
-   public Result(String response, byte[] body, Map map, List<Cookie> cookies) {
-      this.cookies = cookies;
-      this.response = response;
-      this.body = body;
-      this.map = map;
-   }
+    public Result(String response, byte[] body, Map map, List<Cookie> cookies) {
+        this.cookies = cookies;
+        this.response = response;
+        this.body = body;
+        this.map = map;
+    }
 
-   public List<Cookie> getCookies() {
-      return cookies;
-   }
+    public List<Cookie> getCookies() {
+        return cookies;
+    }
 
-   public byte[] getBody() {
-      return body;
-   }
+    public byte[] getBody() {
+        return body;
+    }
 
-   public String getResponse() throws Exception {
-      return response;
-   }
+    public String getResponse() throws Exception {
+        return response;
+    }
 
-   public Map getMap() {
-      return map;
-   }
+    public Map getMap() {
+        return map;
+    }
 }

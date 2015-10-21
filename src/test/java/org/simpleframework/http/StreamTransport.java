@@ -17,51 +17,60 @@ import org.simpleframework.transport.Transport;
 import org.simpleframework.transport.trace.Trace;
 
 public class StreamTransport implements Transport {
-   
-   private final WritableByteChannel write;
-   private final ReadableByteChannel read;
-   private final OutputStream out;
-   
-   public StreamTransport(InputStream in, OutputStream out) {
-      this.write = Channels.newChannel(out);
-      this.read = Channels.newChannel(in);
-      this.out = out;
-   }
 
-   public void close() throws IOException {
-      write.close();
-      read.close();
-   }
+    private final WritableByteChannel write;
+    private final ReadableByteChannel read;
+    private final OutputStream out;
 
-   public void flush() throws IOException {
-      out.flush();
-   }
+    public StreamTransport(InputStream in, OutputStream out) {
+        this.write = Channels.newChannel(out);
+        this.read = Channels.newChannel(in);
+        this.out = out;
+    }
 
-   public int read(ByteBuffer buffer) throws IOException {
-      return read.read(buffer);
-   }
+    @Override
+    public void close() throws IOException {
+        write.close();
+        read.close();
+    }
 
-   public void write(ByteBuffer buffer) throws IOException {
-      write.write(buffer);
-   }
+    @Override
+    public void flush() throws IOException {
+        out.flush();
+    }
 
-   public Map getAttributes() {
-      return null;
-   }
+    @Override
+    public int read(ByteBuffer buffer) throws IOException {
+        return read.read(buffer);
+    }
 
-   public SocketChannel getChannel() {
-      return null;
-   }   
+    @Override
+    public void write(ByteBuffer buffer) throws IOException {
+        write.write(buffer);
+    }
 
-   public SSLEngine getEngine() {
-      return null;
-   }
+    @Override
+    public Map getAttributes() {
+        return null;
+    }
 
-   public Certificate getCertificate() {
-      return null;
-   }
+    @Override
+    public SocketChannel getChannel() {
+        return null;
+    }
 
-   public Trace getTrace() {
-      return new MockTrace();
-   }
+    @Override
+    public SSLEngine getEngine() {
+        return null;
+    }
+
+    @Override
+    public Certificate getCertificate() {
+        return null;
+    }
+
+    @Override
+    public Trace getTrace() {
+        return new MockTrace();
+    }
 }

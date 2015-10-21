@@ -9,41 +9,45 @@ import org.simpleframework.transport.Channel;
 
 public class MockEntity implements Entity {
 
-  private Body body;
-  private Header header;
-   
-  public MockEntity() {
-    super();          
-  }  
-  
-  public MockEntity(Body body) {
-     this.body = body;
-  }
-  
-  public MockEntity(Body body, Header header) {
-     this.body = body;
-     this.header = header;
-  }
-  
-  public long getTime() {
-     return 0;
-  }
+    private Body body;
+    private Header header;
 
-  public Body getBody() {
-    return body;
-  }
+    public MockEntity() {
+        super();
+    }
 
-  public Header getHeader() {
-    return header;
-  }
+    public MockEntity(Body body) {
+        this.body = body;
+    }
 
-  public Channel getChannel() {
-    return null;
-  }
+    public MockEntity(Body body, Header header) {
+        this.body = body;
+        this.header = header;
+    }
 
-  public void close() {}
+    @Override
+    public long getTime() {
+        return 0;
+    }
 
-  public long getStart() {
-    return 0;
-  }
+    @Override
+    public Body getBody() {
+        return body;
+    }
+
+    @Override
+    public Header getHeader() {
+        return header;
+    }
+
+    @Override
+    public Channel getChannel() {
+        return null;
+    }
+
+    public void close() {}
+
+    public long getStart() {
+        return 0;
+    }
 }

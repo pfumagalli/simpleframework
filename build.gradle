@@ -26,7 +26,7 @@ sourceSets {
 
 // Our dependencies
 dependencies {
-  testCompile 'junit:junit:4.12'
+  testRuntime 'org.testng:testng:6.8.21'
 }
 
 // Link JavaDOCs properly

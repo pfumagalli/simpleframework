@@ -13,74 +13,75 @@ import org.simpleframework.http.socket.service.Service;
 import org.simpleframework.transport.trace.TraceAnalyzer;
 
 public class WebSocketChatRoom extends Thread implements Service {
-   
-   private final WebSocketChatRoomListener listener;
-   private final Map<String, FrameChannel> sockets;
-   private final Set<String> users;
-   
-   public WebSocketChatRoom() {
-      this.listener = new WebSocketChatRoomListener(this);
-      this.sockets = new ConcurrentHashMap<String, FrameChannel>();
-      this.users = new CopyOnWriteArraySet<String>();
-   }  
-  
-   public void connect(Session connection) {
-      FrameChannel socket = connection.getChannel();
-      Request req = connection.getRequest();      
-      Cookie user = req.getCookie("user");
-      
-      if(user == null) {
-         user = new Cookie("user", "anonymous");
-      }
-      String name = user.getValue();
-      
-      try {
-         socket.register(listener);
-         join(name, socket);
-      } catch(Exception e) {
-         e.printStackTrace();
-      }
-      
-   }
-   
-   public void join(String user, FrameChannel operation) {
-      sockets.put(user, operation);
-      users.add(user);
-   }
-   
-   public void leave(String user, FrameChannel operation){
-      sockets.put(user, operation);
-      users.add(user);
-   }
-   
-   public void distribute(Frame frame) {
-      try {         
-         for(String user : users) {
-            FrameChannel operation = sockets.get(user);
-            
-            try {
-               
-               operation.send(frame);
-            } catch(Exception e){   
-               sockets.remove(user);
-               users.remove(user);
-               e.printStackTrace();
-               operation.close();
+
+    private final WebSocketChatRoomListener listener;
+    private final Map<String, FrameChannel> sockets;
+    private final Set<String> users;
+
+    public WebSocketChatRoom() {
+        this.listener = new WebSocketChatRoomListener(this);
+        this.sockets = new ConcurrentHashMap<String, FrameChannel>();
+        this.users = new CopyOnWriteArraySet<String>();
+    }
+
+    @Override
+    public void connect(Session connection) {
+        final FrameChannel socket = connection.getChannel();
+        final Request req = connection.getRequest();
+        Cookie user = req.getCookie("user");
+
+        if(user == null) {
+            user = new Cookie("user", "anonymous");
+        }
+        final String name = user.getValue();
+
+        try {
+            socket.register(listener);
+            join(name, socket);
+        } catch(final Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void join(String user, FrameChannel operation) {
+        sockets.put(user, operation);
+        users.add(user);
+    }
+
+    public void leave(String user, FrameChannel operation){
+        sockets.put(user, operation);
+        users.add(user);
+    }
+
+    public void distribute(Frame frame) {
+        try {
+            for(final String user : users) {
+                final FrameChannel operation = sockets.get(user);
+
+                try {
+
+                    operation.send(frame);
+                } catch(final Exception e){
+                    sockets.remove(user);
+                    users.remove(user);
+                    e.printStackTrace();
+                    operation.close();
+                }
             }
-         }
-      } catch(Exception e) {
-         e.printStackTrace();
-      }
-   }
-   
-   public static void main(String[] list) throws Exception {
-      TraceAnalyzer agent = new WebSocketAnalyzer();
-      WebSocketChatRoom application = new WebSocketChatRoom();
-      File file = new File("C:\\work\\development\\async_http\\proxy\\yieldbroker-proxy-site\\certificate\\www.yieldbroker.com.pfx");
-      KeyStoreReader reader = new KeyStoreReader(WebSocketCertificate.KeyStoreType.PKCS12, file, "p", "p");
-      WebSocketCertificate certificate = new WebSocketCertificate(reader, WebSocketCertificate.SecureProtocol.TLS);
-      WebSocketChatApplication container = new WebSocketChatApplication(application, certificate, agent, 6060);
-      application.start();
-      container.connect();
-   }
+        } catch(final Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void main(String[] list) throws Exception {
+        final TraceAnalyzer agent = new WebSocketAnalyzer();
+        final WebSocketChatRoom application = new WebSocketChatRoom();
+        final File file = new File("C:\\work\\development\\async_http\\proxy\\yieldbroker-proxy-site\\certificate\\www.yieldbroker.com.pfx");
+        final KeyStoreReader reader = new KeyStoreReader(WebSocketCertificate.KeyStoreType.PKCS12, file, "p", "p");
+        final WebSocketCertificate certificate = new WebSocketCertificate(reader, WebSocketCertificate.SecureProtocol.TLS);
+        final WebSocketChatApplication container = new WebSocketChatApplication(application, certificate, agent, 6060);
+        application.start();
+        container.connect();
+    }
 }

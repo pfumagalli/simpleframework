@@ -1,126 +1,131 @@
 package org.simpleframework.http.core;
 
-import org.simpleframework.http.core.Conversation;
+import org.testng.AssertJUnit;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
-import junit.framework.TestCase;
+public class ConversationTest {
 
-public class ConversationTest extends TestCase {
-   
-   private MockRequest request;   
-   private MockResponse response;   
-   private Conversation support;
-   
-   public void setUp() {
-      request = new MockRequest();
-      response = new MockResponse();
-      support = new Conversation(request, response);
-   }
-   
-   public void testWebSocket() {
-      request.setMajor(1);
-      request.setMinor(1);
-      response.setValue("Connection", "upgrade");     
-      
-      assertFalse(support.isWebSocket());
-      assertFalse(support.isTunnel());
-      assertTrue(support.isKeepAlive());
-      
-      request.setValue("Upgrade", "WebSocket");
-      
-      assertFalse(support.isWebSocket());
-      assertFalse(support.isTunnel());
-      assertTrue(support.isKeepAlive());
-      
-      response.setCode(101);
-      response.setValue("Upgrade", "websocket");
-      
-      assertTrue(support.isWebSocket());
-      assertTrue(support.isTunnel());
-      assertTrue(support.isKeepAlive());
-   }
-   
-   public void testConnectTunnel() {
-      request.setMajor(1);
-      request.setMinor(1);
-      response.setCode(404);
-      request.setMethod("CONNECT");   
-      
-      assertFalse(support.isWebSocket());
-      assertFalse(support.isTunnel());
-      assertTrue(support.isKeepAlive());
+    private MockRequest request;
+    private MockResponse response;
+    private Conversation support;
 
-      response.setCode(200);
-      
-      assertFalse(support.isWebSocket());
-      assertTrue(support.isTunnel());
-      assertTrue(support.isKeepAlive());
-   }
-   
-   public void testResponse() {
-      request.setMajor(1);
-      request.setMinor(1);
-      response.setValue("Content-Length", "10");
-      response.setValue("Connection", "close");
-      
-      assertFalse(support.isKeepAlive());
-      assertTrue(support.isPersistent());
-      assertEquals(support.getContentLength(), 10);
-      assertEquals(support.isChunkedEncoded(), false);
-      
-      request.setMinor(0);
-      
-      assertFalse(support.isKeepAlive());
-      assertFalse(support.isPersistent());
-      
-      response.setValue("Connection", "keep-alive");
-      
-      assertTrue(support.isKeepAlive());
-      assertFalse(support.isPersistent());
-      
-      response.setValue("Transfer-Encoding", "chunked");
-      
-      assertTrue(support.isChunkedEncoded());
-      assertTrue(support.isKeepAlive());
-   }
-   
-   public void testConversation() {
-      request.setMajor(1);
-      request.setMinor(1);
-      support.setChunkedEncoded();
-      
-      assertEquals(response.getValue("Transfer-Encoding"), "chunked");
-      assertEquals(response.getValue("Connection"), "keep-alive");
-      assertTrue(support.isKeepAlive());
-      assertTrue(support.isPersistent());
-      
-      request.setMinor(0);      
-      support.setChunkedEncoded();
-      
-      assertEquals(response.getValue("Connection"), "close");
-      assertFalse(support.isKeepAlive());      
-      
-      request.setMajor(1);
-      request.setMinor(1);
-      response.setValue("Content-Length", "10");
-      response.setValue("Connection", "close");
-      
-      assertFalse(support.isKeepAlive());
-      assertTrue(support.isPersistent());
-      assertEquals(support.getContentLength(), 10);
-      
-      request.setMinor(0);
-      
-      assertFalse(support.isKeepAlive());
-      assertFalse(support.isPersistent());
-      
-      response.setValue("Connection", "keep-alive");
-      
-      assertTrue(support.isKeepAlive());
-      assertFalse(support.isPersistent());
-      
-      response.setValue("Transfer-Encoding", "chunked");
-      
-      assertTrue(support.isChunkedEncoded());
-      assertTrue(support.isKeepAlive());
-   }
+    @BeforeMethod
+    public void setUp() {
+        request = new MockRequest();
+        response = new MockResponse();
+        support = new Conversation(request, response);
+    }
+
+    @Test
+    public void testWebSocket() {
+        request.setMajor(1);
+        request.setMinor(1);
+        response.setValue("Connection", "upgrade");
+
+        AssertJUnit.assertFalse(support.isWebSocket());
+        AssertJUnit.assertFalse(support.isTunnel());
+        AssertJUnit.assertTrue(support.isKeepAlive());
+
+        request.setValue("Upgrade", "WebSocket");
+
+        AssertJUnit.assertFalse(support.isWebSocket());
+        AssertJUnit.assertFalse(support.isTunnel());
+        AssertJUnit.assertTrue(support.isKeepAlive());
+
+        response.setCode(101);
+        response.setValue("Upgrade", "websocket");
+
+        AssertJUnit.assertTrue(support.isWebSocket());
+        AssertJUnit.assertTrue(support.isTunnel());
+        AssertJUnit.assertTrue(support.isKeepAlive());
+    }
+
+    @Test
+    public void testConnectTunnel() {
+        request.setMajor(1);
+        request.setMinor(1);
+        response.setCode(404);
+        request.setMethod("CONNECT");
+
+        AssertJUnit.assertFalse(support.isWebSocket());
+        AssertJUnit.assertFalse(support.isTunnel());
+        AssertJUnit.assertTrue(support.isKeepAlive());
+
+        response.setCode(200);
+
+        AssertJUnit.assertFalse(support.isWebSocket());
+        AssertJUnit.assertTrue(support.isTunnel());
+        AssertJUnit.assertTrue(support.isKeepAlive());
+    }
+
+    @Test
+    public void testResponse() {
+        request.setMajor(1);
+        request.setMinor(1);
+        response.setValue("Content-Length", "10");
+        response.setValue("Connection", "close");
+
+        AssertJUnit.assertFalse(support.isKeepAlive());
+        AssertJUnit.assertTrue(support.isPersistent());
+        AssertJUnit.assertEquals(support.getContentLength(), 10);
+        AssertJUnit.assertEquals(support.isChunkedEncoded(), false);
+
+        request.setMinor(0);
+
+        AssertJUnit.assertFalse(support.isKeepAlive());
+        AssertJUnit.assertFalse(support.isPersistent());
+
+        response.setValue("Connection", "keep-alive");
+
+        AssertJUnit.assertTrue(support.isKeepAlive());
+        AssertJUnit.assertFalse(support.isPersistent());
+
+        response.setValue("Transfer-Encoding", "chunked");
+
+        AssertJUnit.assertTrue(support.isChunkedEncoded());
+        AssertJUnit.assertTrue(support.isKeepAlive());
+    }
+
+    @Test
+    public void testConversation() {
+        request.setMajor(1);
+        request.setMinor(1);
+        support.setChunkedEncoded();
+
+        AssertJUnit.assertEquals(response.getValue("Transfer-Encoding"), "chunked");
+        AssertJUnit.assertEquals(response.getValue("Connection"), "keep-alive");
+        AssertJUnit.assertTrue(support.isKeepAlive());
+        AssertJUnit.assertTrue(support.isPersistent());
+
+        request.setMinor(0);
+        support.setChunkedEncoded();
+
+        AssertJUnit.assertEquals(response.getValue("Connection"), "close");
+        AssertJUnit.assertFalse(support.isKeepAlive());
+
+        request.setMajor(1);
+        request.setMinor(1);
+        response.setValue("Content-Length", "10");
+        response.setValue("Connection", "close");
+
+        AssertJUnit.assertFalse(support.isKeepAlive());
+        AssertJUnit.assertTrue(support.isPersistent());
+        AssertJUnit.assertEquals(support.getContentLength(), 10);
+
+        request.setMinor(0);
+
+        AssertJUnit.assertFalse(support.isKeepAlive());
+        AssertJUnit.assertFalse(support.isPersistent());
+
+        response.setValue("Connection", "keep-alive");
+
+        AssertJUnit.assertTrue(support.isKeepAlive());
+        AssertJUnit.assertFalse(support.isPersistent());
+
+        response.setValue("Transfer-Encoding", "chunked");
+
+        AssertJUnit.assertTrue(support.isChunkedEncoded());
+        AssertJUnit.assertTrue(support.isKeepAlive());
+    }
 }

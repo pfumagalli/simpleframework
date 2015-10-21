@@ -1,92 +1,100 @@
 package org.simpleframework.http.parse;
 
-import junit.framework.TestCase;
-
 import org.simpleframework.http.Query;
+import org.testng.AssertJUnit;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
-public class AddressParserTest extends TestCase {
+public class AddressParserTest {
 
-   private AddressParser link;
-        
-   protected void setUp() {
-      link = new AddressParser();           
-   } 
+    private AddressParser link;
 
-   public void testEmptyPath() {
-      assertEquals("/", link.getPath().toString());
-   }
+    @BeforeMethod
+    protected void setUp() {
+        link = new AddressParser();
+    }
 
-   public void testEmptyQuery() {
-      Query query = link.getQuery();
-      assertEquals(0, query.size());
-   }
+    @Test
+    public void testEmptyPath() {
+        AssertJUnit.assertEquals("/", link.getPath().toString());
+    }
 
-   public void testPath() {
-      link.parse("/this/./is//some/relative/./hidden/../URI.txt"); 
-      assertEquals("/this/is//some/relative/URI.txt", link.getPath().toString());      
+    @Test
+    public void testEmptyQuery() {
+        final Query query = link.getQuery();
+        AssertJUnit.assertEquals(0, query.size());
+    }
 
-      link.parse("/this//is/a/simple/path.html?query");
-      assertEquals("/this//is/a/simple/path.html", link.getPath().toString());
-   }
+    @Test
+    public void testPath() {
+        link.parse("/this/./is//some/relative/./hidden/../URI.txt");
+        AssertJUnit.assertEquals("/this/is//some/relative/URI.txt", link.getPath().toString());
 
-   public void testQuery() {
-      link.parse("/?name=value&attribute=string");
-   
-      Query query = link.getQuery();               
-                    
-      assertEquals(2, query.size());      
-      assertEquals("value", query.get("name"));
-      assertTrue(query.containsKey("attribute"));
+        link.parse("/this//is/a/simple/path.html?query");
+        AssertJUnit.assertEquals("/this//is/a/simple/path.html", link.getPath().toString());
+    }
 
-      query.clear();
-      query.put("name", "change");
+    @Test
+    public void testQuery() {
+        link.parse("/?name=value&attribute=string");
 
-      assertEquals("change", query.get("name"));
-   }
+        final Query query = link.getQuery();
 
-   public void testPathParameters() {
-      link.parse("/index.html;jsessionid=1234567890?jsessionid=query"); 
-      assertEquals("1234567890", link.getParameters().get("jsessionid"));
-      
-      link.parse("/path/index.jsp");
-      link.getParameters().put("jsessionid", "value");
-      
-      assertEquals("/path/index.jsp;jsessionid=value", link.toString());
-      
-      link.parse("/path");
-      link.getParameters().put("a", "1");
-      link.getParameters().put("b", "2");
-      link.getParameters().put("c", "3");
-      
-      link.parse(link.toString());
+        AssertJUnit.assertEquals(2, query.size());
+        AssertJUnit.assertEquals("value", query.get("name"));
+        AssertJUnit.assertTrue(query.containsKey("attribute"));
 
-      assertEquals("1", link.getParameters().get("a"));
-      assertEquals("2", link.getParameters().get("b"));
-      assertEquals("3", link.getParameters().get("c"));
-      
-      
-   }
+        query.clear();
+        query.put("name", "change");
 
-   public void testAbsolute() {
-      link.parse("http://domain:9090/index.html?query=value");
-      assertEquals("domain", link.getDomain());
-   
-      link.setDomain("some.domain");
-      assertEquals("some.domain", link.getDomain());
-      assertEquals("http://some.domain:9090/index.html?query=value", link.toString());
-      assertEquals(9090, link.getPort());
+        AssertJUnit.assertEquals("change", query.get("name"));
+    }
 
-      link.parse("domain.com:80/index.html?a=b&c=d");
-      assertEquals("domain.com", link.getDomain());
-      assertEquals(80, link.getPort());
-      
-      link.parse("https://secure.com/index.html");
-      assertEquals("https", link.getScheme());
-      assertEquals("secure.com", link.getDomain());
-      
-      link.setDomain("www.google.com:45");
-      assertEquals("www.google.com", link.getDomain());
-      assertEquals("https://www.google.com:45/index.html", link.toString());
-      assertEquals(45, link.getPort());
-   }
-}        
+    @Test
+    public void testPathParameters() {
+        link.parse("/index.html;jsessionid=1234567890?jsessionid=query");
+        AssertJUnit.assertEquals("1234567890", link.getParameters().get("jsessionid"));
+
+        link.parse("/path/index.jsp");
+        link.getParameters().put("jsessionid", "value");
+
+        AssertJUnit.assertEquals("/path/index.jsp;jsessionid=value", link.toString());
+
+        link.parse("/path");
+        link.getParameters().put("a", "1");
+        link.getParameters().put("b", "2");
+        link.getParameters().put("c", "3");
+
+        link.parse(link.toString());
+
+        AssertJUnit.assertEquals("1", link.getParameters().get("a"));
+        AssertJUnit.assertEquals("2", link.getParameters().get("b"));
+        AssertJUnit.assertEquals("3", link.getParameters().get("c"));
+
+
+    }
+
+    @Test
+    public void testAbsolute() {
+        link.parse("http://domain:9090/index.html?query=value");
+        AssertJUnit.assertEquals("domain", link.getDomain());
+
+        link.setDomain("some.domain");
+        AssertJUnit.assertEquals("some.domain", link.getDomain());
+        AssertJUnit.assertEquals("http://some.domain:9090/index.html?query=value", link.toString());
+        AssertJUnit.assertEquals(9090, link.getPort());
+
+        link.parse("domain.com:80/index.html?a=b&c=d");
+        AssertJUnit.assertEquals("domain.com", link.getDomain());
+        AssertJUnit.assertEquals(80, link.getPort());
+
+        link.parse("https://secure.com/index.html");
+        AssertJUnit.assertEquals("https", link.getScheme());
+        AssertJUnit.assertEquals("secure.com", link.getDomain());
+
+        link.setDomain("www.google.com:45");
+        AssertJUnit.assertEquals("www.google.com", link.getDomain());
+        AssertJUnit.assertEquals("https://www.google.com:45/index.html", link.toString());
+        AssertJUnit.assertEquals(45, link.getPort());
+    }
+}

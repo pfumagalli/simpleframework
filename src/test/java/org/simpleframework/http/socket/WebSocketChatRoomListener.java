@@ -13,94 +13,97 @@ import org.simpleframework.transport.Certificate;
 
 
 public class WebSocketChatRoomListener implements FrameListener {
-   
-   private final CertificateUserExtractor extractor;
-   private final WebSocketChatRoom room;
-   
-   public WebSocketChatRoomListener(WebSocketChatRoom room) {
-      this.extractor = new CertificateUserExtractor(".*EMAILADDRESS=(.*?),.*");
-      this.room = room;
-   }
 
-   public void onFrame(Session socket, Frame frame) {
-      FrameType type = frame.getType();
-      String text = frame.getText();
-      
-      if(type == FrameType.TEXT){
-         try {
-            Request request = socket.getRequest();
-            String user = extractor.extractUser(request);
-            
-            text = text + "  (SSL=" + request.isSecure() + ", EMAILADDRESS=" + user + ")";
-         } catch(Exception e) {
-            e.printStackTrace();
-         }
-         Frame replay = new DataFrame(type, text);
-         room.distribute(replay);
-      }
-   }
+    private final CertificateUserExtractor extractor;
+    private final WebSocketChatRoom room;
 
-   public void onError(Session socket, Exception cause) {
-      System.err.println("onError(");
-      cause.printStackTrace();
-      System.err.println(")");
-   }
+    public WebSocketChatRoomListener(WebSocketChatRoom room) {
+        this.extractor = new CertificateUserExtractor(".*EMAILADDRESS=(.*?),.*");
+        this.room = room;
+    }
 
-   public void onOpen(Session socket) {
-      System.err.println("onOpen(" + socket +")");
-   }
+    @Override
+    public void onFrame(Session socket, Frame frame) {
+        final FrameType type = frame.getType();
+        String text = frame.getText();
 
-   public void onClose(Session session, Reason reason) {
-      System.err.println("onClose(" + reason +")");
-   }
-   
-   public static class CertificateUserExtractor {
-      
-      private final Map<String, String> cache;
-      private final Pattern pattern;
-      
-      public CertificateUserExtractor(String pattern) {
-         this.cache = new ConcurrentHashMap<String, String>();
-         this.pattern = Pattern.compile(pattern);
-      }  
-      
-      public String extractUser(Request request) throws Exception {
-         try {
-            Certificate certificate = request.getClientCertificate();
-            
-            if(certificate != null) {
-               X509Certificate[] certificates = certificate.getChain();
-               
-               for(X509Certificate entry : certificates) {
-                  String user = extractCertificateUser(entry);
-                  
-                  if(user != null) {
-                     return user;
-                  }
-               }
+        if(type == FrameType.TEXT){
+            try {
+                final Request request = socket.getRequest();
+                final String user = extractor.extractUser(request);
+
+                text = text + "  (SSL=" + request.isSecure() + ", EMAILADDRESS=" + user + ")";
+            } catch(final Exception e) {
+                e.printStackTrace();
             }
-         } catch(Exception e) {
-            e.printStackTrace();
-         }
-         return null;
-      } 
-      
-      private String extractCertificateUser(X509Certificate certificate) throws Exception {
-         Principal principal = certificate.getSubjectDN();
-         String name = principal.getName();
-         String user = cache.get(name);
-         
-         if(user == null) {
-            if(!cache.containsKey(name)) {
-               Matcher matcher = pattern.matcher(name);
-            
-               if(matcher.matches()) {
-                  user = matcher.group(1);
-               }
-               cache.put(name, user);
+            final Frame replay = new DataFrame(type, text);
+            room.distribute(replay);
+        }
+    }
+
+    @Override
+    public void onError(Session socket, Exception cause) {
+        System.err.println("onError(");
+        cause.printStackTrace();
+        System.err.println(")");
+    }
+
+    public void onOpen(Session socket) {
+        System.err.println("onOpen(" + socket +")");
+    }
+
+    @Override
+    public void onClose(Session session, Reason reason) {
+        System.err.println("onClose(" + reason +")");
+    }
+
+    public static class CertificateUserExtractor {
+
+        private final Map<String, String> cache;
+        private final Pattern pattern;
+
+        public CertificateUserExtractor(String pattern) {
+            this.cache = new ConcurrentHashMap<String, String>();
+            this.pattern = Pattern.compile(pattern);
+        }
+
+        public String extractUser(Request request) throws Exception {
+            try {
+                final Certificate certificate = request.getClientCertificate();
+
+                if(certificate != null) {
+                    final X509Certificate[] certificates = certificate.getChain();
+
+                    for(final X509Certificate entry : certificates) {
+                        final String user = extractCertificateUser(entry);
+
+                        if(user != null) {
+                            return user;
+                        }
+                    }
+                }
+            } catch(final Exception e) {
+                e.printStackTrace();
             }
-         }
-         return user;
-      }
-   }
+            return null;
+        }
+
+        private String extractCertificateUser(X509Certificate certificate) throws Exception {
+            final Principal principal = certificate.getSubjectDN();
+            final String name = principal.getName();
+            String user = cache.get(name);
+
+            if(user == null) {
+                if(!cache.containsKey(name)) {
+                    final Matcher matcher = pattern.matcher(name);
+
+                    if(matcher.matches()) {
+                        user = matcher.group(1);
+                    }
+                    cache.put(name, user);
+                }
+            }
+            return user;
+        }
+    }
 }

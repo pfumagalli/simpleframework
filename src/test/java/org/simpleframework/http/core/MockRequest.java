@@ -24,179 +24,204 @@ import org.simpleframework.transport.Certificate;
 import org.simpleframework.transport.Channel;
 
 public class MockRequest extends RequestMessage implements Request {
-   
-   private MessageHeader message;
-   private Channel channel;
-   private String target;   
-   private String method = "GET";   
-   private String content;   
-   private String type;   
-   private int major = 1;   
-   private int minor = 1;
-   
-   public MockRequest() {
-      this.header = new RequestConsumer();
-      this.message = new MessageHeader();
-      this.channel = new MockChannel(null);
-   }
-   
-   public void setValue(String name, String value) {
-      message.setValue(name, value);
-   }
-   
-   public void add(String name, String value) {
-      message.addValue(name, value);
-   }
-   
-   public boolean isSecure(){
-      return false;
-   }
-   
-   public String getTarget() {
-      return target;
-   }
-   
-   public void setContentType(String value) {
-      type = value;
-   }
-   
-   public void setTarget(String target) {
-      this.target = target;
-   }
-   
-   public Path getPath() {
-      return new AddressParser(target).getPath();
-   }
-  
-   public Query getQuery() {
-      return new AddressParser(target).getQuery();
-   }
-   
-   public String getMethod() {
-      return method;
-   }
 
-   public void setMethod(String method) {
-      this.method = method;
-   }
+    private final MessageHeader message;
+    private final Channel channel;
+    private String target;
+    private String method = "GET";
+    private String content;
+    private String type;
+    private int major = 1;
+    private int minor = 1;
 
-   public int getMajor() {
-      return major;
-   }
+    public MockRequest() {
+        this.header = new RequestConsumer();
+        this.message = new MessageHeader();
+        this.channel = new MockChannel(null);
+    }
 
-   public void setMajor(int major) {
-      this.major = major;
-   }
+    public void setValue(String name, String value) {
+        message.setValue(name, value);
+    }
 
-   public int getMinor() {
-      return minor;
-   }
+    public void add(String name, String value) {
+        message.addValue(name, value);
+    }
 
-   public void setMinor(int minor) {
-      this.minor = minor;
-   }   
+    @Override
+    public boolean isSecure(){
+        return false;
+    }
 
-   public Certificate getClientCertificate() {
-      return null;
-   }
-   
-   public String getContent() {
-      return content;
-   }
-   
-   public void setContent(String content) {
-      this.content = content;
-   }
+    @Override
+    public String getTarget() {
+        return target;
+    }
 
-   public InputStream getInputStream() {
-      return null;
-   }
-   
-   public Part getPart(String name) {
-      return null;
-   }
-   
-   public List<Part> getParts() {
-      return Collections.emptyList();
-   }
-   
-   public int size() {
-      return 0;
-   }
+    public void setContentType(String value) {
+        type = value;
+    }
 
-   public Cookie getCookie(String name) {     
-      return null;
-   }
+    public void setTarget(String target) {
+        this.target = target;
+    }
 
-   public String getParameter(String name) {      
-      return null;
-   }
+    @Override
+    public Path getPath() {
+        return new AddressParser(target).getPath();
+    }
 
-   public Map getAttributes() {
-      return null;
-   }
+    @Override
+    public Query getQuery() {
+        return new AddressParser(target).getQuery();
+    }
 
-   
-   public ContentType getContentType() {
-      return new ContentTypeParser(type);
-   }
-   
-   public long getContentLength() {
-      String value = getValue("Content-Length");
-      
-      if(value != null) {
-         return new Long(value);
-      }
-      return -1;
-   }
-   
-   public String getTransferEncoding() {
-      List<String> list = getValues("Transfer-Encoding");
-      
-      if(list.size() > 0) {
-         return list.get(0);
-      }
-      return null;
-   }
-   
-   public ContentDisposition getDisposition() {
-      String value = getValue("Content-Disposition");
-      
-      if(value == null) {
-         return null;
-      }
-      return new ContentDispositionParser(value);
-   }
-   
-   public List<String> getValues(String name) {
-      return message.getValues(name);
-   }
-   
-   public String getValue(String name) {
-      return message.getValue(name);
-   }
+    @Override
+    public String getMethod() {
+        return method;
+    }
 
-   public Object getAttribute(Object key) {
-      return null;
-   }
+    public void setMethod(String method) {
+        this.method = method;
+    }
 
-   public boolean isKeepAlive() {
-      return true;
-   }
+    @Override
+    public int getMajor() {
+        return major;
+    }
 
-   public InetSocketAddress getClientAddress() {
-      return null;
-   }
+    public void setMajor(int major) {
+        this.major = major;
+    }
 
-   public ReadableByteChannel getByteChannel() throws IOException {   
-      return null;
-   }
+    @Override
+    public int getMinor() {
+        return minor;
+    }
 
-   public long getRequestTime() {
-      return 0;
-   }
+    public void setMinor(int minor) {
+        this.minor = minor;
+    }
 
-   public Channel getChannel() {
-      return channel;
-   }
+    @Override
+    public Certificate getClientCertificate() {
+        return null;
+    }
+
+    @Override
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    @Override
+    public InputStream getInputStream() {
+        return null;
+    }
+
+    @Override
+    public Part getPart(String name) {
+        return null;
+    }
+
+    @Override
+    public List<Part> getParts() {
+        return Collections.emptyList();
+    }
+
+    public int size() {
+        return 0;
+    }
+
+    @Override
+    public Cookie getCookie(String name) {
+        return null;
+    }
+
+    @Override
+    public String getParameter(String name) {
+        return null;
+    }
+
+    @Override
+    public Map getAttributes() {
+        return null;
+    }
+
+
+    @Override
+    public ContentType getContentType() {
+        return new ContentTypeParser(type);
+    }
+
+    @Override
+    public long getContentLength() {
+        final String value = getValue("Content-Length");
+
+        if(value != null) {
+            return new Long(value);
+        }
+        return -1;
+    }
+
+    public String getTransferEncoding() {
+        final List<String> list = getValues("Transfer-Encoding");
+
+        if(list.size() > 0) {
+            return list.get(0);
+        }
+        return null;
+    }
+
+    public ContentDisposition getDisposition() {
+        final String value = getValue("Content-Disposition");
+
+        if(value == null) {
+            return null;
+        }
+        return new ContentDispositionParser(value);
+    }
+
+    @Override
+    public List<String> getValues(String name) {
+        return message.getValues(name);
+    }
+
+    @Override
+    public String getValue(String name) {
+        return message.getValue(name);
+    }
+
+    @Override
+    public Object getAttribute(Object key) {
+        return null;
+    }
+
+    @Override
+    public boolean isKeepAlive() {
+        return true;
+    }
+
+    @Override
+    public InetSocketAddress getClientAddress() {
+        return null;
+    }
+
+    @Override
+    public ReadableByteChannel getByteChannel() throws IOException {
+        return null;
+    }
+
+    @Override
+    public long getRequestTime() {
+        return 0;
+    }
+
+    @Override
+    public Channel getChannel() {
+        return channel;
+    }
 }

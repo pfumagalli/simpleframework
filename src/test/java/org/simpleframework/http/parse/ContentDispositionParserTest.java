@@ -1,33 +1,35 @@
 package org.simpleframework.http.parse;
 
-import org.simpleframework.http.parse.ContentDispositionParser;
+import org.testng.AssertJUnit;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
-import junit.framework.TestCase;
+public class ContentDispositionParserTest {
 
-public class ContentDispositionParserTest extends TestCase {
-	
-   private ContentDispositionParser parser;
-	
-   public void setUp() {
-      parser = new ContentDispositionParser();
-   }
+    private ContentDispositionParser parser;
 
-   public void testDisposition() {
-      parser.parse("form-data; name=\"input_check\"");
+    @BeforeMethod
+    public void setUp() {
+        parser = new ContentDispositionParser();
+    }
 
-      assertFalse(parser.isFile());
-      assertEquals(parser.getName(), "input_check");
+    @Test
+    public void testDisposition() {
+        parser.parse("form-data; name=\"input_check\"");
 
-      parser.parse("form-data; name=\"input_password\"");
+        AssertJUnit.assertFalse(parser.isFile());
+        AssertJUnit.assertEquals(parser.getName(), "input_check");
 
-      assertFalse(parser.isFile());
-      assertEquals(parser.getName(), "input_password");
+        parser.parse("form-data; name=\"input_password\"");
 
-      parser.parse("form-data; name=\"FileItem\"; filename=\"C:\\Inetpub\\wwwroot\\Upload\\file1.txt\"");
+        AssertJUnit.assertFalse(parser.isFile());
+        AssertJUnit.assertEquals(parser.getName(), "input_password");
 
-      assertTrue(parser.isFile());
-      assertEquals(parser.getName(), "FileItem");
-      assertEquals(parser.getFileName(), "C:\\Inetpub\\wwwroot\\Upload\\file1.txt");
+        parser.parse("form-data; name=\"FileItem\"; filename=\"C:\\Inetpub\\wwwroot\\Upload\\file1.txt\"");
 
-   }
+        AssertJUnit.assertTrue(parser.isFile());
+        AssertJUnit.assertEquals(parser.getName(), "FileItem");
+        AssertJUnit.assertEquals(parser.getFileName(), "C:\\Inetpub\\wwwroot\\Upload\\file1.txt");
+
+    }
 }
