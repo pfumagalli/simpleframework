@@ -29,6 +29,20 @@ dependencies {
   testRuntime 'org.testng:testng:6.8.21'
 }
 
+// Testing...
+test {
+  useTestNG();
+  testLogging {
+    events = [ "started", "skipped", "failed", "passed" ]
+    showStandardStreams = true
+    stackTraceFilters = []
+    exceptionFormat = 'full'
+    showStackTraces = true
+    showExceptions = true
+    showCauses = true
+  }
+}
+
 // Link JavaDOCs properly
 javadoc {
   options.links 'https://docs.oracle.com/javase/7/docs/api/'
