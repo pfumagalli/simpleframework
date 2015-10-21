@@ -57,7 +57,7 @@ public class RequestConsumerTest {
                     "Accept: */*\r\n"+
                     "\r\n").getBytes();
 
-    @Test
+    @Test(enabled=false)
     public void testPerformance() throws Exception {
         testPerformance(SOURCE_1, "/index.html");
         testPerformance(SOURCE_2, "/tmp/amazon_files/21lP7I1XB5L.jpg");
@@ -65,8 +65,8 @@ public class RequestConsumerTest {
         testPerformance(SOURCE_4, "/tmp/amazon_files/narrowtimer_transparent._V47062518_.gif");
     }
 
-    @Test
-    public void testPerformance(byte[] request, String path) throws Exception {
+    @Test(enabled = false)
+    private void testPerformance(byte[] request, String path) throws Exception {
         final long start = System.currentTimeMillis();
 
         for(int i = 0; i < 10000; i++) {

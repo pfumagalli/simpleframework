@@ -11,8 +11,8 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 
@@ -22,21 +22,21 @@ package org.simpleframework.transport.connect;
  * The <code>ConnectionEvent</code> enum represents various events that
  * can occur with a new connection. When a new connection is accepted
  * then the accept event is dispatched to a <code>Trace</code> object
- * if one has been associated with the connection. 
- * 
+ * if one has been associated with the connection.
+ *
  * @author Niall Gallagher
- * 
+ *
  * @see org.simpleframework.transport.trace.Trace
  */
 public enum ConnectionEvent {
-   
-   /**
-    * This event occurs when the server accepts a new connection.
-    */
-   ACCEPT,
-   
-   /**
-    * This event occurs when there is an error with the connection.
-    */
-   ERROR
+
+    /**
+     * This event occurs when the server accepts a new connection.
+     */
+    ACCEPT,
+
+    /**
+     * This event occurs when there is an error with the connection.
+     */
+    ERROR
 }
