@@ -1,0 +1,45 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+// Source and target compatibility
+sourceCompatibility = '1.7'
+targetCompatibility = '1.7'
+
+// Download from Bintray/Maven
+repositories {
+  jcenter()
+  mavenCentral()
+}
+
+// Add a "provided" configuration
+configurations {
+  provided
+  provided.extendsFrom(compile)
+}
+
+// Inject the provided configuration in class paths
+sourceSets {
+  main.compileClasspath += configurations.provided
+  test.compileClasspath += configurations.provided
+  test.runtimeClasspath += configurations.provided
+}
+
+// Our dependencies
+dependencies {
+  testCompile 'junit:junit:4.12'
+}
+
+// Link JavaDOCs properly
+javadoc {
+  options.links 'https://docs.oracle.com/javase/7/docs/api/'
+  classpath += configurations.provided
+}
+
+// Eclipse output
+eclipse {
+  classpath {
+    defaultOutputDir = file('.eclipse-out')
+    downloadSources = true
+    downloadJavadoc = true
+  }
+}
